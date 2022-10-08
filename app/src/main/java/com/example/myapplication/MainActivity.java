@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static com.example.myapplication.SimpleTextAdapter.*;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.myapplication.ui.PermissionDialog;
@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
     private String TAG = MainActivity.class.getSimpleName();
     private View mainLayout;
 
-    private final static String[] permissions = new String[] {
+    private final static String[] permissions = new String[]{
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_WIFI_STATE,
@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
 
         RecyclerView recyclerView = findViewById(R.id.main_list);
         List<String> list = new ArrayList<>();
-        for (int i=0; i<100; i++) {
+        for (int i = 0; i < 100; i++) {
             list.add(String.format("TEXT %d", i));
         }
 
@@ -53,17 +53,29 @@ public class MainActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         SimpleTextAdapter adapter = new SimpleTextAdapter(list);
-        adapter.setListener(new SimpleTextAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                String message = String.format("%s가 클릭 됐다. 그 내용은 %s이다", position, list.get(position));
-                Snackbar mySnackbar = Snackbar.make(mainLayout, message, Snackbar.LENGTH_INDEFINITE);
-                mySnackbar.setAction("확인", view -> {
-                    mySnackbar.dismiss();
-                });
-                mySnackbar.show();
-//                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+        adapter.setListener((viewType, position) -> {
+            switch (viewType) {
+                case VIEW_TEXT: {
+                    String message = String.format("%s가 클릭 됐다. 그 내용은 %s이다", position, list.get(position));
+                    Snackbar mySnackbar = Snackbar.make(mainLayout, message, Snackbar.LENGTH_INDEFINITE);
+                    mySnackbar.setAction("확인", view -> {
+                        mySnackbar.dismiss();
+                    });
+                    mySnackbar.show();
+                }
+                break;
+
+                case VIEW_VTN: {
+                    String message = position + " button이 눌려짐";
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    break;
+                }
+
+                default:
+                    return;
             }
+
+
         });
 
         recyclerView.setAdapter(adapter);
@@ -84,7 +96,7 @@ public class MainActivity extends Activity {
             }
         }
 
-        if (! permissionsToRequest.isEmpty()) {
+        if (!permissionsToRequest.isEmpty()) {
             new PermissionDialog(this, permissionsToRequest).show();
         }
     }

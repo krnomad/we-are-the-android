@@ -4,18 +4,29 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.ViewHolder> {
     private final List<String> mData;
 
+    @IntDef({VIEW_TEXT, VIEW_VTN})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ViewType {}
+
+    public static final int VIEW_TEXT = 1;
+    public static final int VIEW_VTN = 2;
+
     public interface OnItemClickListener {
-        void onItemClick(View v, int position) ;
+        void onItemClick(@ViewType int viewType, int position);
     }
 
     public void setListener(OnItemClickListener mListener) {
@@ -52,19 +63,30 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
+        Button itemBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemView.setOnClickListener(view -> {
+            textView = itemView.findViewById(R.id.text1);
+            itemBtn = itemView.findViewById(R.id.item_btn);
+
+            textView.setOnClickListener(view -> {
                 int pos = getAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION ) {
                     if ( mListener != null ) {
-                        mListener.onItemClick(view, pos);
+                        mListener.onItemClick(VIEW_TEXT, pos);
                     }
                 }
             });
 
-            textView = itemView.findViewById(R.id.text1);
+            itemBtn.setOnClickListener(view -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION ) {
+                    if ( mListener != null ) {
+                        mListener.onItemClick(VIEW_VTN, pos);
+                    }
+                }
+            });
         }
     }
 }

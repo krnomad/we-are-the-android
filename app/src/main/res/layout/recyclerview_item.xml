@@ -2,6 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:weightSum="1"
     xmlns:apps="http://schemas.android.com/tools">
 
     <TextView
@@ -9,6 +10,16 @@
         android:textSize="32sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:textAlignment="center"
         apps:text="test"/>
+
+    <Button
+        android:id="@+id/item_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:textAlignment="center"
+        android:text="extract"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

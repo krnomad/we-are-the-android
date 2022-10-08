@@ -14,6 +14,16 @@ import java.util.List;
 public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.ViewHolder> {
     private final List<String> mData;
 
+    public interface OnItemClickListener {
+        void onItemClick(View v, int position) ;
+    }
+
+    public void setListener(OnItemClickListener mListener) {
+        this.mListener = mListener;
+    }
+
+    private OnItemClickListener mListener = null;
+
     public SimpleTextAdapter(List<String> mData) {
         this.mData = mData;
     }
@@ -40,11 +50,19 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
         return mData.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(view -> {
+                int pos = getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION ) {
+                    if ( mListener != null ) {
+                        mListener.onItemClick(view, pos);
+                    }
+                }
+            });
 
             textView = itemView.findViewById(R.id.text1);
         }

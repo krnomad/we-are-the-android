@@ -4,22 +4,33 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.myapplication.ui.PermissionDialog;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private String TAG = MainActivity.class.getSimpleName();
     private View mainLayout;
+
+    private final static String[] permissions = new String[] {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE
+    };
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -54,6 +65,31 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
             }
         });
+
         recyclerView.setAdapter(adapter);
+        handlePermissions();
+    }
+
+    public void handlePermissions() {
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            return;
+        }
+
+        List<String> permissionsToRequest = new ArrayList<String>();
+
+        for (int i = 0; i < permissions.length; i++) {
+            String p = permissions[i];
+            if (checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(p);
+            }
+        }
+
+        if (! permissionsToRequest.isEmpty()) {
+            new PermissionDialog(this, permissionsToRequest).show();
+        }
+    }
+
+    public void requestPermissions(String[] permissions) {
+        requestPermissions(permissions, 111);
     }
 }
